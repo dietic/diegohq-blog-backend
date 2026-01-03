@@ -1,6 +1,15 @@
 """Models package for SQLAlchemy ORM models."""
 
 from src.models.base import Base
+from src.models.contact_submission import ContactSubmission
+from src.models.content import (
+    DesktopIcon,
+    DesktopSettings,
+    Item,
+    Post,
+    Quest,
+    WindowContent,
+)
 from src.models.daily_reward import DailyReward
 from src.models.inventory_item import InventoryItem
 from src.models.post_progress import PostProgress
@@ -18,4 +27,12 @@ __all__ = [
     "PostProgress",
     "DailyReward",
     "XPTransaction",
+    "ContactSubmission",
+    # Content models
+    "Post",
+    "Quest",
+    "Item",
+    "DesktopIcon",
+    "DesktopSettings",
+    "WindowContent",
 ]

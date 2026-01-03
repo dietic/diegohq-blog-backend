@@ -1,5 +1,13 @@
 """Repositories package for data access layer."""
 
+from src.repositories.content import (
+    DesktopIconRepository,
+    DesktopSettingsRepository,
+    ItemRepository,
+    PostRepository,
+    QuestRepository,
+    WindowContentRepository,
+)
 from src.repositories.daily_reward_repository import DailyRewardRepository
 from src.repositories.inventory_repository import InventoryRepository
 from src.repositories.post_progress_repository import PostProgressRepository
@@ -16,4 +24,11 @@ __all__ = [
     "PostProgressRepository",
     "DailyRewardRepository",
     "XPTransactionRepository",
+    # Content repositories
+    "PostRepository",
+    "QuestRepository",
+    "ItemRepository",
+    "DesktopIconRepository",
+    "DesktopSettingsRepository",
+    "WindowContentRepository",
 ]

@@ -1,6 +1,13 @@
 """Services package for business logic."""
 
 from src.services.auth_service import AuthService
+from src.services.content import (
+    DesktopService,
+    ItemService,
+    PostService,
+    QuestContentService,
+    WindowService,
+)
 from src.services.game_service import GameService
 from src.services.quest_service import QuestService
 from src.services.user_service import UserService
@@ -10,4 +17,10 @@ __all__ = [
     "UserService",
     "GameService",
     "QuestService",
+    # Content services
+    "PostService",
+    "QuestContentService",
+    "ItemService",
+    "DesktopService",
+    "WindowService",
 ]

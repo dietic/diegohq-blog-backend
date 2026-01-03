@@ -8,6 +8,33 @@ from src.schemas.auth import (
     RegisterRequest,
     TokenPayload,
 )
+from src.schemas.contact import (
+    ContactReplyRequest,
+    ContactSubmissionCreate,
+    ContactSubmissionListResponse,
+    ContactSubmissionResponse,
+)
+from src.schemas.content import (
+    DesktopIconCreate,
+    DesktopIconResponse,
+    DesktopIconUpdate,
+    DesktopSettingsResponse,
+    DesktopSettingsUpdate,
+    ItemCreate,
+    ItemResponse,
+    ItemUpdate,
+    PostCreate,
+    PostResponse,
+    PostSummaryResponse,
+    PostUpdate,
+    QuestCreate,
+    QuestResponse,
+    QuestUpdate,
+    ReorderIconsRequest,
+    WindowContentCreate,
+    WindowContentResponse,
+    WindowContentUpdate,
+)
 from src.schemas.game import (
     AccessCheckRequest,
     AccessCheckResponse,
@@ -38,6 +65,11 @@ __all__ = [
     "RefreshRequest",
     "RefreshResponse",
     "TokenPayload",
+    # Contact
+    "ContactSubmissionCreate",
+    "ContactSubmissionResponse",
+    "ContactSubmissionListResponse",
+    "ContactReplyRequest",
     # User
     "UserCreate",
     "UserUpdate",
@@ -56,4 +88,28 @@ __all__ = [
     "QuestSubmitRequest",
     "QuestSubmitResponse",
     "QuestProgressResponse",
+    # Content - Post
+    "PostCreate",
+    "PostUpdate",
+    "PostResponse",
+    "PostSummaryResponse",
+    # Content - Quest
+    "QuestCreate",
+    "QuestUpdate",
+    "QuestResponse",
+    # Content - Item
+    "ItemCreate",
+    "ItemUpdate",
+    "ItemResponse",
+    # Content - Desktop
+    "DesktopIconCreate",
+    "DesktopIconUpdate",
+    "DesktopIconResponse",
+    "DesktopSettingsUpdate",
+    "DesktopSettingsResponse",
+    "ReorderIconsRequest",
+    # Content - Window
+    "WindowContentCreate",
+    "WindowContentUpdate",
+    "WindowContentResponse",
 ]
