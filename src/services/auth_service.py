@@ -107,6 +107,7 @@ class AuthService:
             access_token=access_token,
             refresh_token=refresh_token,
             token_type="bearer",
+            expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         )
 
     async def refresh_tokens(self, refresh_token: str) -> RefreshResponse:
@@ -146,6 +147,7 @@ class AuthService:
             access_token=new_access_token,
             refresh_token=new_refresh_token,
             token_type="bearer",
+            expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         )
 
     async def logout(self, user_id: UUID) -> bool:

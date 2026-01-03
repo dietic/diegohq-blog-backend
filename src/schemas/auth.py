@@ -4,7 +4,7 @@ Pydantic schemas for authentication operations.
 Defines request/response schemas for auth endpoints.
 """
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 class RegisterRequest(BaseModel):
@@ -49,21 +49,20 @@ class LoginResponse(BaseModel):
 
     access_token: str = Field(
         ...,
-        alias="accessToken",
         description="JWT access token",
     )
     refresh_token: str = Field(
         ...,
-        alias="refreshToken",
         description="JWT refresh token",
     )
     token_type: str = Field(
         default="bearer",
-        alias="tokenType",
         description="Token type",
     )
-
-    model_config = ConfigDict(populate_by_name=True)
+    expires_in: int = Field(
+        ...,
+        description="Token expiration time in seconds",
+    )
 
 
 class RefreshRequest(BaseModel):
@@ -71,11 +70,8 @@ class RefreshRequest(BaseModel):
 
     refresh_token: str = Field(
         ...,
-        alias="refreshToken",
         description="JWT refresh token",
     )
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 class RefreshResponse(BaseModel):
@@ -83,21 +79,20 @@ class RefreshResponse(BaseModel):
 
     access_token: str = Field(
         ...,
-        alias="accessToken",
         description="New JWT access token",
     )
     refresh_token: str = Field(
         ...,
-        alias="refreshToken",
         description="New JWT refresh token",
     )
     token_type: str = Field(
         default="bearer",
-        alias="tokenType",
         description="Token type",
     )
-
-    model_config = ConfigDict(populate_by_name=True)
+    expires_in: int = Field(
+        ...,
+        description="Token expiration time in seconds",
+    )
 
 
 class TokenPayload(BaseModel):
