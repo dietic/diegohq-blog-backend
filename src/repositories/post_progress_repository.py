@@ -7,7 +7,7 @@ Handles CRUD operations and queries for PostProgress model.
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.post_progress import PostProgress
@@ -168,3 +168,14 @@ class PostProgressRepository(BaseRepository[PostProgress]):
             )
         )
         return result.scalar_one_or_none() is not None
+
+    async def delete_all(self) -> int:
+        """
+        Delete all post progress records.
+
+        Returns:
+            The number of records deleted.
+        """
+        result = await self.db.execute(delete(PostProgress))
+        await self.db.commit()
+        return result.rowcount or 0

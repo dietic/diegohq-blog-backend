@@ -149,13 +149,29 @@ class GameService:
 
         return new_xp, new_level, new_level > old_level
 
-    async def read_post(self, user: User, post_slug: str) -> ReadPostResponse:
+    async def has_read_post(self, user: User, post_slug: str) -> bool:
+        """
+        Check if a user has read a specific post.
+
+        Args:
+            user: The user.
+            post_slug: The post slug.
+
+        Returns:
+            True if the post has been read, False otherwise.
+        """
+        return await self.post_progress_repo.has_read_post(user.id, post_slug)
+
+    async def read_post(
+        self, user: User, post_slug: str, read_xp: int = XP_READ_POST
+    ) -> ReadPostResponse:
         """
         Mark a post as read and award XP if first read.
 
         Args:
             user: The user.
             post_slug: The post slug.
+            read_xp: XP to award for reading this post.
 
         Returns:
             ReadPostResponse with XP and level info.
@@ -176,10 +192,10 @@ class GameService:
         # Mark as read
         await self.post_progress_repo.mark_as_read(user.id, post_slug)
 
-        # Award XP
+        # Award XP (use post's read_xp value)
         new_xp, new_level, leveled_up = await self.award_xp(
             user=user,
-            amount=XP_READ_POST,
+            amount=read_xp,
             source="read_post",
             source_id=post_slug,
             description=f"Read post: {post_slug}",
@@ -187,7 +203,7 @@ class GameService:
 
         return ReadPostResponse(
             success=True,
-            xp_awarded=XP_READ_POST,
+            xp_awarded=read_xp,
             already_read=False,
             new_xp=new_xp,
             new_level=new_level,

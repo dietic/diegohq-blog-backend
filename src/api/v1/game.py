@@ -4,9 +4,11 @@ Game mechanics endpoints.
 Provides XP tracking, level progress, daily rewards, and content access.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
+from src.config import settings
 from src.dependencies import AsyncSessionDep, CurrentUser
+from src.repositories.post_progress_repository import PostProgressRepository
 from src.schemas.game import (
     AccessCheckRequest,
     AccessCheckResponse,
@@ -40,7 +42,7 @@ async def read_post(
         XP awarded and level info.
     """
     game_service = GameService(db)
-    return await game_service.read_post(current_user, data.post_slug)
+    return await game_service.read_post(current_user, data.post_slug, data.read_xp)
 
 
 @router.post("/daily-reward", response_model=DailyRewardResponse)
@@ -126,3 +128,52 @@ async def get_level_progress(
     """
     game_service = GameService(db)
     return game_service.get_level_progress(current_user)
+
+
+@router.get("/post-status/{post_slug}")
+async def get_post_status(
+    post_slug: str,
+    current_user: CurrentUser,
+    db: AsyncSessionDep,
+) -> dict:
+    """
+    Check if user has read a specific post.
+
+    Args:
+        post_slug: The post slug to check.
+        current_user: The authenticated user.
+        db: Database session.
+
+    Returns:
+        Dict with has_read status.
+    """
+    game_service = GameService(db)
+    has_read = await game_service.has_read_post(current_user, post_slug)
+    return {"has_read": has_read, "post_slug": post_slug}
+
+
+@router.delete("/dev/reset-post-progress")
+async def reset_all_post_progress(
+    db: AsyncSessionDep,
+) -> dict:
+    """
+    Reset all post progress records (development only).
+
+    Args:
+        db: Database session.
+
+    Returns:
+        Dict with deleted count.
+
+    Raises:
+        HTTPException: If not in development mode.
+    """
+    if settings.is_production:
+        raise HTTPException(
+            status_code=403,
+            detail="This endpoint is only available in development mode",
+        )
+
+    repo = PostProgressRepository(db)
+    deleted_count = await repo.delete_all()
+    return {"success": True, "deleted_count": deleted_count}

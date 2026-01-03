@@ -21,6 +21,13 @@ class ReadPostRequest(BaseModel):
         max_length=255,
         description="The slug of the post that was read",
     )
+    read_xp: int = Field(
+        default=15,
+        alias="readXp",
+        ge=0,
+        le=1000,
+        description="XP to award for reading this post",
+    )
 
 
 class ReadPostResponse(BaseModel):
