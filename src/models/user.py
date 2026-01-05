@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from src.models.inventory_item import InventoryItem
     from src.models.post_progress import PostProgress
     from src.models.quest_progress import QuestProgress
+    from src.models.quest_submission import QuestSubmission
     from src.models.refresh_token import RefreshToken
     from src.models.xp_transaction import XPTransaction
 
@@ -115,6 +116,12 @@ class User(Base, UUIDMixin, TimestampMixin):
     )
     xp_transactions: Mapped[list["XPTransaction"]] = relationship(
         "XPTransaction",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    quest_submissions: Mapped[list["QuestSubmission"]] = relationship(
+        "QuestSubmission",
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="selectin",

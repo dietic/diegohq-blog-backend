@@ -80,7 +80,15 @@ async def use_item(
 
     Returns:
         Result of using the item.
+
+    Raises:
+        HTTPException: If items feature is disabled.
     """
+    if not settings.FEATURE_ITEMS_ENABLED:
+        raise HTTPException(
+            status_code=404,
+            detail="Items feature is not available",
+        )
     game_service = GameService(db)
     return await game_service.use_item(current_user, data.item_id, data.target_slug)
 

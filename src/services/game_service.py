@@ -10,6 +10,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import settings
 from src.core.exceptions import BadRequestException, NotFoundException
 from src.models.user import User
 from src.repositories.daily_reward_repository import DailyRewardRepository
@@ -54,32 +55,50 @@ class GameService:
         """
         Calculate level from XP using formula: XP = floor(level^1.5 * 100).
 
+        Iterates to find the highest level where xp_for_level <= current xp.
+        No level cap - levels continue infinitely.
+
         Args:
             xp: The total XP.
 
         Returns:
-            The calculated level.
+            The calculated level (minimum 1).
         """
         if xp <= 0:
             return 1
-        # Inverse: level = (XP / 100) ^ (1/1.5)
-        level = int((xp / 100) ** (1 / 1.5))
-        return max(1, level)
+
+        level = 1
+        while True:
+            xp_for_next = GameService.calculate_xp_for_level(level + 1)
+            if xp < xp_for_next:
+                break
+            level += 1
+        return level
 
     @staticmethod
     def calculate_xp_for_level(level: int) -> int:
         """
-        Calculate XP required for a specific level.
+        Calculate cumulative XP required to reach a specific level.
+
+        XP per level = (level - 1)^1.5 * 100, so:
+        - Level 1→2: 100 XP
+        - Level 2→3: 282 XP
+        - Level 3→4: 519 XP
+        - ...grows exponentially
 
         Args:
             level: The target level.
 
         Returns:
-            The XP required to reach that level.
+            The cumulative XP required to reach that level.
         """
         if level <= 1:
             return 0
-        return int(math.floor((level ** 1.5) * 100))
+        # Sum up XP needed for each level: sum of n^1.5 * 100 for n=1 to level-1
+        total = 0
+        for n in range(1, level):
+            total += int(math.floor((n ** 1.5) * 100))
+        return total
 
     def get_level_progress(self, user: User) -> LevelProgressResponse:
         """
@@ -359,8 +378,8 @@ class GameService:
             has_access = False
             reason = f"Requires level {required_level}"
 
-        # Check item requirement
-        if required_item:
+        # Check item requirement (skip if items feature is disabled)
+        if required_item and settings.FEATURE_ITEMS_ENABLED:
             has_item = await self.inventory_repo.user_has_item(user.id, required_item)
             has_required_item = has_item
 
@@ -372,6 +391,9 @@ class GameService:
             if not has_item and not is_unlocked:
                 has_access = False
                 reason = f"Requires item: {required_item}"
+        elif required_item and not settings.FEATURE_ITEMS_ENABLED:
+            # Items disabled - always grant access
+            has_required_item = True
 
         return AccessCheckResponse(
             has_access=has_access,

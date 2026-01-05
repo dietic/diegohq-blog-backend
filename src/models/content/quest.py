@@ -40,7 +40,9 @@ class Quest(Base, UUIDMixin, TimestampMixin):
     quest_type: Mapped[str] = mapped_column(
         String(50),
         nullable=False,
-    )  # multiple-choice, text-input, call-to-action
+    )  # multiple-choice, code
+
+    # Multiple choice fields
     options: Mapped[list[str] | None] = mapped_column(
         ARRAY(String(500)),
         nullable=True,
@@ -49,6 +51,24 @@ class Quest(Base, UUIDMixin, TimestampMixin):
         Text,
         nullable=True,
     )
+
+    # Code quest fields
+    language: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )  # javascript, typescript, python, html, css, jsx, tsx
+    starter_code: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+    ai_criteria: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )  # Instructions for AI reviewer
+    hint: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )  # Tip shown after 3 failed attempts
 
     # Rewards
     xp_reward: Mapped[int] = mapped_column(
@@ -60,19 +80,15 @@ class Quest(Base, UUIDMixin, TimestampMixin):
         nullable=True,
     )
 
-    # Relationships
-    host_post_slug: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False,
-        index=True,
-    )
-
     # Metadata
     difficulty: Mapped[str] = mapped_column(
         String(20),
         default="easy",
         nullable=False,
     )  # easy, medium, hard
+
+    # Note: The relationship between posts and quests is defined on the Post model
+    # via post.quest_id. Quests no longer reference posts directly.
 
     def __repr__(self) -> str:
         """Return string representation of Quest."""

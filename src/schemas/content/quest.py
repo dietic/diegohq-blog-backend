@@ -11,8 +11,9 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-QuestType = Literal["multiple-choice", "text-input", "call-to-action"]
+QuestType = Literal["multiple-choice", "code"]
 QuestDifficulty = Literal["easy", "medium", "hard"]
+CodeLanguage = Literal["javascript", "typescript", "python", "html", "css", "jsx", "tsx"]
 
 
 class QuestCreate(BaseModel):
@@ -50,8 +51,27 @@ class QuestCreate(BaseModel):
     )
     correct_answer: str | None = Field(
         default=None,
-        description="Correct answer for validation",
+        description="Correct answer for validation (multiple-choice)",
     )
+
+    # Code quest fields
+    language: CodeLanguage | None = Field(
+        default=None,
+        description="Programming language for code quests",
+    )
+    starter_code: str | None = Field(
+        default=None,
+        description="Starter code for code quests",
+    )
+    ai_criteria: str | None = Field(
+        default=None,
+        description="AI review criteria for code quests",
+    )
+    hint: str | None = Field(
+        default=None,
+        description="Hint shown after 3 failed attempts",
+    )
+
     xp_reward: int = Field(
         ...,
         ge=1,
@@ -61,11 +81,6 @@ class QuestCreate(BaseModel):
         default=None,
         max_length=100,
         description="Item reward ID",
-    )
-    host_post_slug: str = Field(
-        ...,
-        max_length=255,
-        description="Host post slug",
     )
     difficulty: QuestDifficulty = Field(
         default="easy",
@@ -108,8 +123,27 @@ class QuestUpdate(BaseModel):
     )
     correct_answer: str | None = Field(
         default=None,
-        description="Correct answer for validation",
+        description="Correct answer for validation (multiple-choice)",
     )
+
+    # Code quest fields
+    language: CodeLanguage | None = Field(
+        default=None,
+        description="Programming language for code quests",
+    )
+    starter_code: str | None = Field(
+        default=None,
+        description="Starter code for code quests",
+    )
+    ai_criteria: str | None = Field(
+        default=None,
+        description="AI review criteria for code quests",
+    )
+    hint: str | None = Field(
+        default=None,
+        description="Hint shown after 3 failed attempts",
+    )
+
     xp_reward: int | None = Field(
         default=None,
         ge=1,
@@ -119,11 +153,6 @@ class QuestUpdate(BaseModel):
         default=None,
         max_length=100,
         description="Item reward ID",
-    )
-    host_post_slug: str | None = Field(
-        default=None,
-        max_length=255,
-        description="Host post slug",
     )
     difficulty: QuestDifficulty | None = Field(
         default=None,
@@ -142,11 +171,19 @@ class QuestResponse(BaseModel):
     description: str
     prompt: str
     quest_type: str
+
+    # Multiple choice fields
     options: list[str] | None = None
     correct_answer: str | None = None
+
+    # Code quest fields
+    language: str | None = None
+    starter_code: str | None = None
+    ai_criteria: str | None = None
+    hint: str | None = None
+
     xp_reward: int
     item_reward: str | None = None
-    host_post_slug: str
     difficulty: str
     created_at: datetime
     updated_at: datetime

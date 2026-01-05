@@ -14,6 +14,7 @@ from src.models.daily_reward import DailyReward
 from src.models.inventory_item import InventoryItem
 from src.models.post_progress import PostProgress
 from src.models.quest_progress import QuestProgress
+from src.models.quest_submission import QuestSubmission
 from src.models.refresh_token import RefreshToken
 from src.models.user import User
 from src.models.xp_transaction import XPTransaction
@@ -24,6 +25,7 @@ __all__ = [
     "RefreshToken",
     "InventoryItem",
     "QuestProgress",
+    "QuestSubmission",
     "PostProgress",
     "DailyReward",
     "XPTransaction",

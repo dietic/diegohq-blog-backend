@@ -42,8 +42,15 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_PER_MINUTE: int = 100
 
+    # Feature Flags
+    FEATURE_ITEMS_ENABLED: bool = False
+
     # Logging
     LOG_LEVEL: str = "INFO"
+
+    # OpenAI (for code quest review)
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
 
     @property
     def is_production(self) -> bool:

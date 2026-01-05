@@ -170,6 +170,79 @@ class QuestProgressRepository(BaseRepository[QuestProgress]):
                 completed_at=datetime.now(UTC),
                 answer_given=answer,
                 attempts=1,
+                started_at=datetime.now(UTC),
             )
             progress = await self.create(progress)
         return progress
+
+    async def start_quest(
+        self,
+        user_id: UUID,
+        quest_id: str,
+    ) -> tuple[QuestProgress, bool]:
+        """
+        Start a quest for a user.
+
+        Args:
+            user_id: The user's UUID.
+            quest_id: The quest ID.
+
+        Returns:
+            Tuple of (QuestProgress, already_started: bool).
+        """
+        progress = await self.get_user_quest(user_id, quest_id)
+        if progress:
+            return progress, True
+
+        progress = QuestProgress(
+            user_id=user_id,
+            quest_id=quest_id,
+            started_at=datetime.now(UTC),
+            attempts=0,
+        )
+        progress = await self.create(progress)
+        return progress, False
+
+    async def update_last_attempt(
+        self,
+        user_id: UUID,
+        quest_id: str,
+    ) -> QuestProgress | None:
+        """
+        Update the last attempt timestamp for cooldown tracking.
+
+        Args:
+            user_id: The user's UUID.
+            quest_id: The quest ID.
+
+        Returns:
+            The updated QuestProgress if found.
+        """
+        progress = await self.get_user_quest(user_id, quest_id)
+        if progress:
+            progress.last_attempt_at = datetime.now(UTC)
+            progress.attempts += 1
+            await self.db.flush()
+            await self.db.refresh(progress)
+        return progress
+
+    async def get_in_progress_quests(self, user_id: UUID) -> list[QuestProgress]:
+        """
+        Get all in-progress (started but not completed) quests for a user.
+
+        Args:
+            user_id: The user's UUID.
+
+        Returns:
+            List of in-progress QuestProgress instances.
+        """
+        result = await self.db.execute(
+            select(QuestProgress).where(
+                and_(
+                    QuestProgress.user_id == user_id,
+                    QuestProgress.started_at.isnot(None),
+                    QuestProgress.completed == False,  # noqa: E712
+                )
+            )
+        )
+        return list(result.scalars().all())

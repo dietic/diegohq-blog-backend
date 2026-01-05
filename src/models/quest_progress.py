@@ -37,6 +37,10 @@ class QuestProgress(Base, UUIDMixin, TimestampMixin):
         nullable=False,
         index=True,
     )
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
     completed: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
@@ -55,6 +59,10 @@ class QuestProgress(Base, UUIDMixin, TimestampMixin):
         default=0,
         nullable=False,
     )
+    last_attempt_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )  # For cooldown tracking
 
     # Relationships
     user: Mapped["User"] = relationship(
