@@ -87,3 +87,10 @@ class PostRepository(BaseRepository[Post]):
             .limit(limit)
         )
         return list(result.scalars().all())
+
+    async def get_by_quest_id(self, quest_id: str) -> Post | None:
+        """Get a post by its associated quest ID."""
+        result = await self.db.execute(
+            select(Post).where(Post.quest_id == quest_id)
+        )
+        return result.scalar_one_or_none()

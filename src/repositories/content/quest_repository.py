@@ -25,13 +25,6 @@ class QuestRepository(BaseRepository[Quest]):
         )
         return result.scalar_one_or_none()
 
-    async def get_by_host_post_slug(self, post_slug: str) -> list[Quest]:
-        """Get all quests associated with a post."""
-        result = await self.db.execute(
-            select(Quest).where(Quest.host_post_slug == post_slug)
-        )
-        return list(result.scalars().all())
-
     async def get_by_item_reward(self, item_id: str) -> list[Quest]:
         """Get quests that reward a specific item."""
         result = await self.db.execute(

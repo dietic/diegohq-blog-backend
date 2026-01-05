@@ -30,10 +30,6 @@ class QuestContentService:
             raise NotFoundException(f"Quest with id '{quest_id}' not found")
         return quest
 
-    async def get_by_post_slug(self, post_slug: str) -> list[Quest]:
-        """Get all quests for a specific post."""
-        return await self.repo.get_by_host_post_slug(post_slug)
-
     async def get_by_item_reward(self, item_id: str) -> list[Quest]:
         """Get quests that reward a specific item."""
         return await self.repo.get_by_item_reward(item_id)
@@ -46,11 +42,14 @@ class QuestContentService:
         prompt: str,
         quest_type: str,
         xp_reward: int,
-        host_post_slug: str,
         options: list[str] | None = None,
         correct_answer: str | None = None,
         item_reward: str | None = None,
         difficulty: str = "easy",
+        language: str | None = None,
+        starter_code: str | None = None,
+        ai_criteria: str | None = None,
+        hint: str | None = None,
     ) -> Quest:
         """Create a new quest."""
         # Check if quest_id already exists
@@ -67,8 +66,11 @@ class QuestContentService:
             correct_answer=correct_answer,
             xp_reward=xp_reward,
             item_reward=item_reward,
-            host_post_slug=host_post_slug,
             difficulty=difficulty,
+            language=language,
+            starter_code=starter_code,
+            ai_criteria=ai_criteria,
+            hint=hint,
         )
         return await self.repo.create(quest)
 
